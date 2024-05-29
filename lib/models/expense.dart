@@ -1,6 +1,8 @@
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import '../enums/category.dart';
 
+final formatter = DateFormat.yMMMMd();
 const uuid = Uuid();
 
 class Expense {
@@ -16,4 +18,8 @@ class Expense {
   final double amount;
   final DateTime date;
   final Category category;
+
+  String get formattedDate {
+    return formatter.format(date);
+  }
 }

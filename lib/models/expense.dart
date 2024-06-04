@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import '../enums/category.dart';
 
-final formatter = DateFormat.yMMMMd();
+final formatter = DateFormat.yMMMd();
 const uuid = Uuid();
 
 class Expense {

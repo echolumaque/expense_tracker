@@ -4,7 +4,12 @@ import '../enums/category.dart';
 import '../models/expense.dart';
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  const NewExpense({
+    super.key,
+    required this.addExpense,
+  });
+
+  final void Function(String, double, DateTime, Category) addExpense;
 
   @override
   State<NewExpense> createState() => _NewExpenseState();
@@ -34,6 +39,42 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
+  void _submitExpenseData() {
+    final enteredAmount = double.tryParse(_amountController.text);
+    final amountIsInValid = enteredAmount == null || enteredAmount <= 0;
+
+    if (_titleController.text.trim().isEmpty ||
+        amountIsInValid ||
+        _selectedDate == null) {
+      // show error message
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text("Invalid input"),
+          content: const Text(
+              "Please make sure a valid title, amount, date and category was entered.."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: const Text("Okay"),
+            )
+          ],
+        ),
+      );
+    } else {
+      widget.addExpense(
+        _titleController.text,
+        enteredAmount,
+        _selectedDate ?? DateTime.now(),
+        _selectedCategory,
+      );
+
+      Navigator.pop(context);
+    }
+  }
+
   @override
   void dispose() {
     // "dispose", like "initState" and "build", is part of a StatefulWidget's lifecycle.
@@ -46,7 +87,7 @@ class _NewExpenseState extends State<NewExpense> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
       child: Column(
         children: [
           TextField(
@@ -120,10 +161,7 @@ class _NewExpenseState extends State<NewExpense> {
                 child: const Text("Cancel"),
               ),
               ElevatedButton(
-                onPressed: () {
-                  print(_amountController.text);
-                  print(_titleController.text);
-                },
+                onPressed: _submitExpenseData,
                 child: const Text("Save Expense"),
               ),
             ],

@@ -12,25 +12,48 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  final List<Expense> _registeredExpenses = [
-    Expense(
-      title: "Flutter Course",
-      amount: 19.99,
-      date: DateTime.now(),
-      category: Category.work,
-    ),
-    Expense(
-      title: "Cinema",
-      amount: 15.69,
-      date: DateTime.now(),
-      category: Category.leisure,
-    ),
-  ];
+  // final List<Expense> _registeredExpenses = [
+  //   Expense(
+  //     title: "Flutter Course",
+  //     amount: 19.99,
+  //     date: DateTime.now(),
+  //     category: Category.work,
+  //   ),
+  //   Expense(
+  //     title: "Cinema",
+  //     amount: 15.69,
+  //     date: DateTime.now(),
+  //     category: Category.leisure,
+  //   ),
+  // ];
+
+  final List<Expense> _registeredExpenses = [];
+
+  void addExpense(
+    String title,
+    double amount,
+    DateTime date,
+    Category category,
+  ) {
+    setState(() {
+      _registeredExpenses.add(
+        Expense(
+          title: title,
+          amount: amount,
+          date: date,
+          category: category,
+        ),
+      );
+    });
+  }
 
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
-      builder: (buildContext) => const NewExpense(),
+      builder: (buildContext) => NewExpense(
+        addExpense: addExpense,
+      ),
     );
   }
 

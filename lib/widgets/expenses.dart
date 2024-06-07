@@ -12,21 +12,6 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  // final List<Expense> _registeredExpenses = [
-  //   Expense(
-  //     title: "Flutter Course",
-  //     amount: 19.99,
-  //     date: DateTime.now(),
-  //     category: Category.work,
-  //   ),
-  //   Expense(
-  //     title: "Cinema",
-  //     amount: 15.69,
-  //     date: DateTime.now(),
-  //     category: Category.leisure,
-  //   ),
-  // ];
-
   final List<Expense> _registeredExpenses = [];
 
   void addExpense(
@@ -47,6 +32,29 @@ class _ExpensesState extends State<Expenses> {
     });
   }
 
+  void removeExpense(Expense expenseToRemove) {
+    final expenseIndex = _registeredExpenses.indexOf(expenseToRemove);
+
+    setState(() {
+      _registeredExpenses.remove(expenseToRemove);
+    });
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 3),
+        content: const Text("Expense deleteed."),
+        action: SnackBarAction(
+            label: "Undo",
+            onPressed: () {
+              setState(() {
+                _registeredExpenses.insert(expenseIndex, expenseToRemove);
+              });
+            }),
+      ),
+    );
+  }
+
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
       isScrollControlled: true,
@@ -59,6 +67,15 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    Widget mainContent = _registeredExpenses.isEmpty
+        ? const Center(
+            child: Text("No expenses found. Start adding some!"),
+          )
+        : ExpensesList(
+            expenses: _registeredExpenses,
+            onExpenseRemove: removeExpense,
+          );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Flutter Expense Tracker"),
@@ -73,7 +90,7 @@ class _ExpensesState extends State<Expenses> {
         children: [
           const Text("The chart"),
           Expanded(
-            child: ExpensesList(expenses: _registeredExpenses),
+            child: mainContent,
           ),
         ],
       ),
